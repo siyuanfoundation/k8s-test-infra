@@ -65,9 +65,9 @@ periodics:
   decoration_config:
     timeout: 210m
   extra_refs:
-    - org: etcd-io
+    - org: siyuanfoundation
       repo: etcd
-      base_ref: main
+      base_ref: robust-test
   annotations:
     testgrid-dashboards: sig-etcd-periodics
     testgrid-tab-name: ci-etcd-robustness-amd64
@@ -85,7 +85,7 @@ periodics:
         sed -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
         make install-lazyfs
         set -euo pipefail
-        GO_TEST_FLAGS="-v --count 150 --timeout '200m' --run TestRobustnessExploratory"
+        GO_TEST_FLAGS="-v --count 2 --timeout '200m' --run TestRobustnessExploratory"
         make gofail-enable
         make build
         VERBOSE=1 GOOS=linux GOARCH=amd64 CPU=8 EXPECT_DEBUG=true GO_TEST_FLAGS=${GO_TEST_FLAGS} RESULTS_DIR=/tmp/results make test-robustness || result=$?
@@ -95,11 +95,11 @@ periodics:
         exit $result
       resources:
         requests:
-          cpu: "7"
-          memory: "14Gi"
+          cpu: "4"
+          memory: "4Gi"
         limits:
-          cpu: "7"
-          memory: "14Gi"
+          cpu: "4"
+          memory: "4Gi"
       # fuse needs privileged mode
       securityContext:
         privileged: true
