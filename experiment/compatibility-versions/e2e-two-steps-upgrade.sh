@@ -109,24 +109,32 @@ main() {
     exit $res
   fi
 
+  # Clone the previous versions Kubernetes release branch
+  # TODO(aaron-prindle) extend the branches to test from n-1 -> n-1..3 as more k8s releases are done that support compatibility versions
+  export PREV_RELEASE_BRANCH="release-${PREV_VERSION}"
+  # Define the path within the temp directory for the cloned repo
+  PREV_RELEASE_REPO_PATH="${TMP_DIR}/prev-release-k8s"
+  echo "Cloning branch ${PREV_RELEASE_BRANCH} into ${PREV_RELEASE_REPO_PATH}"
+  git clone --filter=blob:none --single-branch --branch "${PREV_RELEASE_BRANCH}" https://github.com/kubernetes/kubernetes.git "${PREV_RELEASE_REPO_PATH}"
+
+  # enter the cloned prev repo branch (in temp) and run tests
+  pushd "${PREV_RELEASE_REPO_PATH}"
+  build_test_bins "${PREV_RELEASE_BRANCH}" || res=$?
+  run_e2e_tests || res=$?
+  # debug kind version
+  kubectl version
+  # remove ${PWD}/_output/bin from $PATH and export
+  popd
+
   EMULATED_VERSION_UPGRADE_SCRIPT="${EMULATED_VERSION_UPGRADE_SCRIPT:-${PWD}/../test-infra/experiment/compatibility-versions/emulated-version-upgrade.sh}"
   echo "Upgrading cluster with ${EMULATED_VERSION_UPGRADE_SCRIPT}"
   "${EMULATED_VERSION_UPGRADE_SCRIPT}" | tee "${ARTIFACTS}/emulated-upgrade-output.txt"
 
-  # Clone the previous versions Kubernetes release branch
-  # TODO(aaron-prindle) extend the branches to test from n-1 -> n-1..3 as more k8s releases are done that support compatibility versions
-  export RELEASE_BRANCH="release-${CURRENT_VERSION}"
-  # Define the path within the temp directory for the cloned repo
-  RELEASE_REPO_PATH="${TMP_DIR}/release-k8s"
-  echo "Cloning branch ${RELEASE_BRANCH} into ${RELEASE_REPO_PATH}"
-  git clone --filter=blob:none --single-branch --branch "${RELEASE_BRANCH}" https://github.com/kubernetes/kubernetes.git "${RELEASE_REPO_PATH}"
-
-  # enter the cloned prev repo branch (in temp) and run tests
-  pushd "${RELEASE_REPO_PATH}"
-  build_prev_version_bins || res=$?
-  run_prev_version_tests || res=$?
-  popd
-
+  # debug kind version
+  kubectl version
+  # run tests at head
+  build_test_bins "${CURRENT_VERSION}" || res=$?
+  run_e2e_tests || res=$?
 
   cleanup || res=$?
   exit $res
