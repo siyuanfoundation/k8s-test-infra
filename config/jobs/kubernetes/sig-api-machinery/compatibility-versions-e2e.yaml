@@ -199,7 +199,7 @@ periodics:
     path_alias: k8s.io/test-infra
   spec:
     containers:
-    - image: gcr.io/k8s-staging-test-infra/kubekins-e2e:v20250925-95b5a2c7a5-master
+    - image: kubekins-e2e:latest
       command:
       - runner.sh
       - bash
@@ -217,13 +217,13 @@ periodics:
         privileged: true
       resources:
         limits:
-          memory: 14Gi
-          cpu: 7
+          memory: 8Gi
+          cpu: 4
         requests:
           # these are both a bit below peak usage during build
           # this is mostly for building kubernetes
-          memory: 14Gi
-          cpu: 7
+          memory: 8Gi
+          cpu: 4
 - interval: 1h
   cluster: k8s-infra-prow-build
   name: ci-kubernetes-e2e-kind-compatibility-versions-feature-gate-test-n-2
@@ -308,7 +308,14 @@ periodics:
     path_alias: k8s.io/test-infra
   spec:
     containers:
-    - image: gcr.io/k8s-staging-test-infra/krte:v20250925-95b5a2c7a5-master
+      # export COMMON_SCRIPT=/usr/local/google/home/sizhang/Projects/k8s/k8s-test-infra/experiment/compatibility-versions/common.sh
+      # export KUBECONFIG='/<path to user dir>/.kube/kind-config-mkpod'
+      # docker build -t krte:latest .
+      # kind load docker-image krte:latest --name mkpod
+      # CONFIG_PATH=$(realpath ./config/prow/config.yaml) JOB_CONFIG_PATH=$(realpath ./config/jobs/kubernetes/sig-api-machinery/compatibility-versions-e2e.yaml)
+      # ./config/pj-on-kind.sh ci-kubernetes-e2e-kind-two-steps-upgrade-n-minus-1
+    - image: krte:latest
+      imagePullPolicy: IfNotPresent
       command:
       - wrapper.sh
       - bash
@@ -330,13 +337,13 @@ periodics:
         privileged: true
       resources:
         limits:
-          memory: 9Gi
-          cpu: 7
+          memory: 8Gi
+          cpu: 4
         requests:
           # these are both a bit below peak usage during build
           # this is mostly for building kubernetes
-          memory: 9Gi
-          cpu: 7
+          memory: 8Gi
+          cpu: 4
 - interval: 6h
   cluster: k8s-infra-prow-build
   name: ci-kubernetes-e2e-kind-skip-version-upgrade-n-minus-2
