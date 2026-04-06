@@ -203,3 +203,35 @@ presubmits:
             requests:
               cpu: 2
               memory: 4Gi
+
+  - name: pull-cloud-provider-gcp-metis-glibc-floor-test
+    cluster: k8s-infra-prow-build
+    decorate: true
+    path_alias: k8s.io/cloud-provider-gcp
+    always_run: false
+    run_if_changed: "^metis/"
+    labels:
+      preset-dind-enabled: "true"
+    annotations:
+      testgrid-dashboards: provider-gcp-presubmits
+      description: Run GLIBC floor compatibility test for Metis.
+    spec:
+      containers:
+      - image: gcr.io/k8s-staging-test-infra/kubekins-e2e:v20250227-86f212261a-master
+        command:
+        - runner.sh
+        args:
+        - /bin/bash
+        - -c
+        - |
+          cd metis
+          make test-glibc-floor
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 2
+            memory: 4Gi
+          limits:
+            cpu: 4
+            memory: 8Gi
