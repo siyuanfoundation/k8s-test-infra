@@ -91,37 +91,6 @@ postsubmits:
       rerun_auth_config:
         github_team_ids:
           - 2921947 # kind-maintainers
-    - name: post-kind-push-haproxy-image
-      skip_branches:
-        # do not run on dependabot branches, these exist prior to merge
-        # only merged code should trigger these jobs
-        - '^dependabot'
-      cluster: k8s-infra-prow-build-trusted
-      run_if_changed: '(^images/haproxy)|(^images/Makefile)'
-      annotations:
-        testgrid-dashboards: sig-testing-kind, sig-k8s-infra-gcb
-        testgrid-alert-email: bentheelder@google.com,antonio.ojea.garcia@gmail.com
-        testgrid-num-columns-recent: '3'
-      decorate: true
-      spec:
-        serviceAccountName: gcb-builder
-        containers:
-          - image: gcr.io/k8s-staging-test-infra/image-builder:v20251215-d7853fe2a6
-            command:
-              - /run.sh
-            args:
-              - --project=k8s-staging-kind
-              - --scratch-bucket=gs://k8s-staging-kind-gcb
-              - --env-passthrough=PULL_BASE_SHA
-              - --build-dir=.
-              - --with-git-dir
-              - images/haproxy/
-            env:
-              - name: LOG_TO_STDOUT
-                value: "y"
-      rerun_auth_config:
-        github_team_ids:
-          - 2921947 # kind-maintainers
     - name: post-kind-push-local-path-provisioner-image
       skip_branches:
         # do not run on dependabot branches, these exist prior to merge
