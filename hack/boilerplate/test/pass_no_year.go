@@ -14,9 +14,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package jobs
-
-import "embed"
-
-//go:embed *
-var Jobs embed.FS
+package test
