@@ -11,7 +11,7 @@ presets:
   volumes:
   - name: lambda-cred
     secret:
-      secretName: lambda-api-key
+      secretName: lambda-ai-api-key
 
 presubmits:
   kubernetes/kubernetes:
