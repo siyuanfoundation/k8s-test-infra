@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Copyright The Kubernetes Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,48 +17,54 @@
 #
 # Must be run from a kubernetes source checkout directory.
 # Requires: LAMBDA_API_KEY_FILE, JOB_NAME, BUILD_ID, ARTIFACTS env vars.
-# Optional: GPU_TYPE (default: gpu_1x_a100_sxm4)
+# Optional: GPU_TYPE (default: gpu_1x_a10, set empty to accept any available)
 set -o errexit
+set -o nounset
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
-GPU_TYPE="${GPU_TYPE:-gpu_1x_a10}"
-SSH_KEY_NAME="prow-${JOB_NAME}-${BUILD_ID}"
+SSH_OPTS=(-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR)
+GPU_TYPE="${GPU_TYPE-gpu_1x_a10}"
+GPU_ARGS=()
+if [ -n "${GPU_TYPE}" ]; then
+  GPU_ARGS=(--gpu "${GPU_TYPE}")
+fi
+SSH_KEY_NAME=$(echo -n "prow-${JOB_NAME}-${BUILD_ID}" | sha256sum | cut -c1-64)
+SSH_DIR=$(mktemp -d /tmp/lambda-ssh.XXXXXX)
+SSH_KEY="${SSH_DIR}/key"
 
 # --- Install lambdactl ---
 GOPROXY=direct go install github.com/dims/lambdactl@latest
 
 # --- Generate ephemeral SSH key ---
-rm -f /tmp/lambda-ssh /tmp/lambda-ssh.pub
-ssh-keygen -t ed25519 -f /tmp/lambda-ssh -N "" -q
-SSH_KEY_ID=$(lambdactl --json ssh-keys add "${SSH_KEY_NAME}" /tmp/lambda-ssh.pub | jq -r '.id')
+ssh-keygen -t ed25519 -f "${SSH_KEY}" -N "" -q
+SSH_KEY_ID=$(lambdactl --json ssh-keys add "${SSH_KEY_NAME}" "${SSH_KEY}.pub" | jq -r '.id')
 
 cleanup() {
   echo "Cleaning up..."
   [ -n "${INSTANCE_ID:-}" ] && lambdactl stop "${INSTANCE_ID}" --yes 2>/dev/null || true
   [ -n "${SSH_KEY_ID:-}" ] && lambdactl ssh-keys rm "${SSH_KEY_ID}" 2>/dev/null || true
+  rm -rf "${SSH_DIR}"
 }
 trap cleanup EXIT
 
-# --- Launch instance with retries ---
-LAUNCH_OUTPUT=$(lambdactl --json start \
-  --gpu "${GPU_TYPE}" \
+# --- Launch instance (poll until capacity is available) ---
+LAUNCH_OUTPUT=$(lambdactl --json watch \
+  "${GPU_ARGS[@]}" \
   --ssh "${SSH_KEY_NAME}" \
-  --name "prow-${BUILD_ID}" \
-  --retries 4 \
-  --retry-delay 60 \
+  --name "${SSH_KEY_NAME}" \
+  --interval 30 \
+  --timeout 900 \
   --wait-ssh)
 INSTANCE_IP=$(echo "${LAUNCH_OUTPUT}" | jq -r '.ip')
 INSTANCE_ID=$(echo "${LAUNCH_OUTPUT}" | jq -r '.id')
 
-remote() { ssh ${SSH_OPTS} -i /tmp/lambda-ssh "ubuntu@${INSTANCE_IP}" "$@"; }
-rsync_to() { rsync -e "ssh ${SSH_OPTS} -i /tmp/lambda-ssh" "$@"; }
+remote() { ssh "${SSH_OPTS[@]}" -i "${SSH_KEY}" "ubuntu@${INSTANCE_IP}" "$@"; }
+rsync_to() { rsync -e "ssh ${SSH_OPTS[*]} -i ${SSH_KEY}" "$@"; }
 
 # --- Build k8s binaries ---
-git fetch --tags --depth 1 origin 2>/dev/null || true
-KUBE_GIT_VERSION=$(git describe --tags --match='v*' 2>/dev/null || echo "v1.35.0")
-make KUBE_GIT_VERSION="${KUBE_GIT_VERSION}" \
+git fetch --tags --depth 100 origin 2>/dev/null || true
+make \
   WHAT="cmd/kubeadm cmd/kubelet cmd/kubectl test/e2e/e2e.test vendor/github.com/onsi/ginkgo/v2/ginkgo"
 
 # --- Transfer binaries to Lambda instance ---
