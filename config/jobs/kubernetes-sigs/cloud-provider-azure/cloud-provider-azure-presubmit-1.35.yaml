@@ -272,6 +272,8 @@ presubmits:
           value: "-ginkgo.skip=\"\\[Serial\\]\\[Slow\\]|Private\\slink\\sservice|\\[MultipleAgentPools\\]\""
         - name: LABEL_FILTER  # cloud-provider-azure config
           value: "!Serial && !Slow && !PLS && !Multi-Nodepool"
+        - name: ENABLE_IP_TAG_MUTATION  # cloud-provider-azure config
+          value: "true"
         - name: CLUSTER_PROVISIONING_TOOL  # cloud-provider-azure config
           value: "capz"
         - name: ENABLE_VMSS_FLEX  # cloud-provider-azure config
