@@ -111,7 +111,7 @@ sudo systemctl enable kubelet
 sudo kubeadm init \
   --pod-network-cidr=10.88.0.0/16 \
   --cri-socket=unix:///run/containerd/containerd.sock \
-  --ignore-preflight-errors=NumCPU,Mem,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification
+  --ignore-preflight-errors=NumCPU,Mem,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification,KubeletVersion
 
 # Configure kubectl
 mkdir -p "$HOME/.kube"

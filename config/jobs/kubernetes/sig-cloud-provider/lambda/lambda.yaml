@@ -27,7 +27,7 @@ presubmits:
     annotations:
       testgrid-dashboards: sig-node-gpu
       testgrid-tab-name: pull-lambda-device-plugin-gpu
-      description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud A100 GPU instance"
+      description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud GPU instance"
     decorate: true
     decoration_config:
       timeout: 2h
@@ -42,6 +42,9 @@ presubmits:
       - image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260316-e86cefa561-master
         command:
         - runner.sh
+        env:
+        - name: GPU_TYPE
+          value: ""
         args:
         - bash
         - -c
@@ -64,7 +67,7 @@ periodics:
   annotations:
     testgrid-dashboards: sig-node-gpu
     testgrid-tab-name: ci-lambda-device-plugin-gpu
-    description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud A100 GPU instance"
+    description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud GPU instance"
   decorate: true
   decoration_config:
     timeout: 2h
@@ -83,6 +86,9 @@ periodics:
     - image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260316-e86cefa561-master
       command:
       - runner.sh
+      env:
+      - name: GPU_TYPE
+        value: ""
       args:
       - bash
       - -c
