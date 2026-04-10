@@ -1,0 +1,95 @@
+# Prow jobs for DRA GPU e2e tests on Lambda Cloud.
+#
+# These jobs test the dra-driver-nvidia-gpu repo by provisioning an ephemeral
+# Lambda GPU instance, setting up a single-node kubeadm cluster, building and
+# deploying the DRA driver from source, then running the BATS GPU test subset.
+#
+# The shared Lambda CI library (experiment/lambda/lib/) is checked out via
+# extra_refs and sourced by the driver repo's hack/ci/lambda/e2e-test.sh.
+#
+# All Docker and image builds happen on the Lambda instance, not the Prow pod,
+# so no DinD or privileged containers are needed.
+#
+# NOTE: preset-lambda-credential is defined in
+# config/jobs/kubernetes/sig-cloud-provider/lambda/lambda.yaml and reused here.
+
+presubmits:
+  kubernetes-sigs/dra-driver-nvidia-gpu:
+  - name: pull-dra-driver-nvidia-gpu-e2e-lambda-gpu
+    cluster: k8s-infra-prow-build
+    optional: true
+    always_run: false
+    max_concurrency: 1
+    skip_branches:
+    - release-\d+\.\d+
+    decorate: true
+    decoration_config:
+      timeout: 2h
+    labels:
+      preset-lambda-credential: "true"
+    extra_refs:
+    - org: kubernetes
+      repo: test-infra
+      base_ref: master
+      path_alias: k8s.io/test-infra
+    annotations:
+      testgrid-dashboards: sig-node-gpu
+      testgrid-tab-name: pull-dra-driver-nvidia-gpu-lambda
+      description: "DRA GPU e2e tests on Lambda Cloud for dra-driver-nvidia-gpu PRs"
+    spec:
+      containers:
+      - image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260316-e86cefa561-master
+        command:
+        - runner.sh
+        args:
+        - hack/ci/lambda/e2e-test.sh
+        env:
+        - name: GPU_TYPE
+          value: ""
+        resources:
+          requests:
+            cpu: "4"
+            memory: "8Gi"
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+
+periodics:
+- name: ci-dra-driver-nvidia-gpu-e2e-lambda-gpu
+  cluster: k8s-infra-prow-build
+  interval: 6h
+  decorate: true
+  decoration_config:
+    timeout: 2h
+  labels:
+    preset-lambda-credential: "true"
+  annotations:
+    testgrid-dashboards: sig-node-gpu
+    testgrid-tab-name: ci-dra-driver-nvidia-gpu-lambda
+    description: "Periodic DRA GPU e2e tests on Lambda Cloud"
+  extra_refs:
+  - org: kubernetes-sigs
+    repo: dra-driver-nvidia-gpu
+    base_ref: main
+    workdir: true
+  - org: kubernetes
+    repo: test-infra
+    base_ref: master
+    path_alias: k8s.io/test-infra
+  spec:
+    containers:
+    - image: us-central1-docker.pkg.dev/k8s-staging-test-infra/images/kubekins-e2e:v20260316-e86cefa561-master
+      command:
+      - runner.sh
+      args:
+      - hack/ci/lambda/e2e-test.sh
+      env:
+      - name: GPU_TYPE
+        value: ""
+      resources:
+        requests:
+          cpu: "4"
+          memory: "8Gi"
+        limits:
+          cpu: "4"
+          memory: "8Gi"

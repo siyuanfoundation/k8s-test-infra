@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# e2e-test.sh — orchestrates GPU e2e tests on a Lambda Cloud instance.
+# e2e-test.sh -- orchestrates GPU e2e tests on a Lambda Cloud instance.
 #
 # Must be run from a kubernetes source checkout directory.
 # Requires: LAMBDA_API_KEY_FILE, JOB_NAME, BUILD_ID, ARTIFACTS env vars.
@@ -23,44 +23,10 @@ set -o nounset
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SSH_OPTS=(-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR)
-GPU_TYPE="${GPU_TYPE-gpu_1x_a10}"
-GPU_ARGS=()
-if [ -n "${GPU_TYPE}" ]; then
-  GPU_ARGS=(--gpu "${GPU_TYPE}")
-fi
-SSH_KEY_NAME=$(echo -n "prow-${JOB_NAME}-${BUILD_ID}" | sha256sum | cut -c1-64)
-SSH_DIR=$(mktemp -d /tmp/lambda-ssh.XXXXXX)
-SSH_KEY="${SSH_DIR}/key"
+source "${SCRIPT_DIR}/lib/lambda-common.sh"
 
-# --- Install lambdactl ---
-GOPROXY=direct go install github.com/dims/lambdactl@latest
-
-# --- Generate ephemeral SSH key ---
-ssh-keygen -t ed25519 -f "${SSH_KEY}" -N "" -q
-SSH_KEY_ID=$(lambdactl --json ssh-keys add "${SSH_KEY_NAME}" "${SSH_KEY}.pub" | jq -r '.id')
-
-cleanup() {
-  echo "Cleaning up..."
-  [ -n "${INSTANCE_ID:-}" ] && lambdactl stop "${INSTANCE_ID}" --yes 2>/dev/null || true
-  [ -n "${SSH_KEY_ID:-}" ] && lambdactl ssh-keys rm "${SSH_KEY_ID}" 2>/dev/null || true
-  rm -rf "${SSH_DIR}"
-}
-trap cleanup EXIT
-
-# --- Launch instance (poll until capacity is available) ---
-LAUNCH_OUTPUT=$(lambdactl --json watch \
-  "${GPU_ARGS[@]}" \
-  --ssh "${SSH_KEY_NAME}" \
-  --name "${SSH_KEY_NAME}" \
-  --interval 30 \
-  --timeout 900 \
-  --wait-ssh)
-INSTANCE_IP=$(echo "${LAUNCH_OUTPUT}" | jq -r '.ip')
-INSTANCE_ID=$(echo "${LAUNCH_OUTPUT}" | jq -r '.id')
-
-remote() { ssh "${SSH_OPTS[@]}" -i "${SSH_KEY}" "ubuntu@${INSTANCE_IP}" "$@"; }
-rsync_to() { rsync -e "ssh ${SSH_OPTS[*]} -i ${SSH_KEY}" "$@"; }
+# --- Launch Lambda instance ---
+lambda_init_and_launch
 
 # --- Build k8s binaries ---
 git fetch --tags --depth 100 origin 2>/dev/null || true
@@ -68,13 +34,37 @@ make \
   WHAT="cmd/kubeadm cmd/kubelet cmd/kubectl test/e2e/e2e.test vendor/github.com/onsi/ginkgo/v2/ginkgo"
 
 # --- Transfer binaries to Lambda instance ---
-rsync_to _output/local/go/bin/{kubeadm,kubelet,kubectl,e2e.test,ginkgo} "ubuntu@${INSTANCE_IP}:/tmp/"
+lambda_remote mkdir -p /tmp/k8s-bins
+lambda_rsync_to _output/local/go/bin/{kubeadm,kubelet,kubectl} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/k8s-bins/"
+lambda_rsync_to _output/local/go/bin/{e2e.test,ginkgo} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/"
 
 # --- Set up single-node k8s cluster with GPU support ---
-remote bash -s < "${SCRIPT_DIR}/setup-cluster.sh"
+# No CDI, no Docker, no extra labels needed for device-plugin.
+lambda_remote bash -s < "${SCRIPT_DIR}/lib/setup-k8s-node.sh"
+
+# --- Deploy NVIDIA device plugin and wait for GPU capacity ---
+lambda_remote bash -s <<'EOF'
+set -eux
+export KUBECONFIG=$HOME/.kube/config
+kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.1/deployments/static/nvidia-device-plugin.yml
+kubectl -n kube-system rollout status daemonset/nvidia-device-plugin-daemonset --timeout=120s
+
+# Wait for GPU capacity to appear on the node
+for i in $(seq 1 30); do
+  GPU_COUNT=$(kubectl get nodes -o jsonpath='{.items[0].status.capacity.nvidia\.com/gpu}' 2>/dev/null || echo "0")
+  [ -z "${GPU_COUNT}" ] && GPU_COUNT="0"
+  [ "${GPU_COUNT}" != "0" ] && break
+  sleep 2
+done
+echo "GPUs detected: ${GPU_COUNT}"
+if [ "${GPU_COUNT}" = "0" ]; then
+  echo "ERROR: No GPUs detected"
+  exit 1
+fi
+EOF
 
 # --- Run GPU e2e tests ---
-remote bash -s <<TESTEOF
+lambda_remote bash -s <<TESTEOF
 set -eux
 export KUBECONFIG=\$HOME/.kube/config
 mkdir -p /tmp/gpu-test-artifacts
@@ -92,5 +82,4 @@ mkdir -p /tmp/gpu-test-artifacts
 TESTEOF
 
 # --- Collect artifacts ---
-mkdir -p "${ARTIFACTS}"
-rsync_to "ubuntu@${INSTANCE_IP}:/tmp/gpu-test-artifacts/" "${ARTIFACTS}/" || true
+lambda_collect_artifacts /tmp/gpu-test-artifacts/
