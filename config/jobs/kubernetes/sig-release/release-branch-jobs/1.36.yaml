@@ -4131,7 +4131,7 @@ presubmits:
     branches:
     - release-1.36
     cluster: k8s-infra-prow-build
-    context: pull-kubernetes-e2e-gce-1.36-scale-performance-100
+    context: pull-kubernetes-e2e-gce-master-scale-performance-100
     decorate: true
     decoration_config:
       timeout: 2h0m0s
