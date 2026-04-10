@@ -285,7 +285,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com, release-team@kubernetes.io
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-release-1.36-informing
-    testgrid-tab-name: ci-kind-dra
+    testgrid-tab-name: ci-kind-dra-1-36
   cluster: eks-prow-build-cluster
   decorate: true
   decoration_config:
@@ -377,7 +377,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-release-job-config-errors
-    testgrid-tab-name: ci-kind-dra-n-1
+    testgrid-tab-name: ci-kind-dra-n-1-1-36
   cluster: eks-prow-build-cluster
   decorate: true
   decoration_config:
@@ -504,7 +504,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-release-job-config-errors
-    testgrid-tab-name: ci-kind-dra-n-2
+    testgrid-tab-name: ci-kind-dra-n-2-1-36
   cluster: eks-prow-build-cluster
   decorate: true
   decoration_config:
@@ -631,7 +631,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-release-job-config-errors
-    testgrid-tab-name: ci-kind-dra-n-3
+    testgrid-tab-name: ci-kind-dra-n-3-1-36
   cluster: eks-prow-build-cluster
   decorate: true
   decoration_config:
@@ -758,7 +758,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-release-job-config-errors
-    testgrid-tab-name: ci-dra-integration
+    testgrid-tab-name: ci-dra-integration-1-36
   cluster: eks-prow-build-cluster
   decorate: true
   decoration_config:
@@ -803,7 +803,7 @@ periodics:
 - annotations:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com, release-team@kubernetes.io
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-cri-o, sig-release-1.36-informing
-    testgrid-tab-name: ci-node-crio-dra
+    testgrid-tab-name: ci-node-crio-dra-1-36
   cluster: k8s-infra-prow-build
   decorate: true
   decoration_config:
@@ -864,7 +864,7 @@ periodics:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com, release-team@kubernetes.io
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-containerd,
       sig-release-1.36-informing
-    testgrid-tab-name: ci-node-e2e-containerd-1-7-dra
+    testgrid-tab-name: ci-node-e2e-containerd-1-7-dra-1-36
   cluster: k8s-infra-prow-build
   decorate: true
   decoration_config:
@@ -919,7 +919,7 @@ periodics:
     testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com, release-team@kubernetes.io
     testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-containerd,
       sig-release-1.36-informing
-    testgrid-tab-name: ci-node-e2e-containerd-2-0-dra
+    testgrid-tab-name: ci-node-e2e-containerd-2-0-dra-1-36
   cluster: k8s-infra-prow-build
   decorate: true
   decoration_config:
