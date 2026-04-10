@@ -10,6 +10,12 @@ variants:
     K8S_RELEASE: stable
     BAZEL_VERSION: 3.4.1
     DOCKER_VERSION: 5:28.*
+  '1.36':
+    CONFIG: '1.36'
+    GO_VERSION: 1.26.2
+    K8S_RELEASE: latest-1.36
+    BAZEL_VERSION: 3.4.1
+    DOCKER_VERSION: 5:28.*
   '1.35':
     CONFIG: '1.35'
     GO_VERSION: 1.25.9
