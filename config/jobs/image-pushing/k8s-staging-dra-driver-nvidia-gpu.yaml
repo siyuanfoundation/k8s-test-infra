@@ -1,6 +1,6 @@
 postsubmits:
-  kubernetes-sigs/nvidia-dra-driver-gpu:
-  - name: post-nvidia-dra-driver-gpu-push-images
+  kubernetes-sigs/dra-driver-nvidia-gpu:
+  - name: post-dra-driver-nvidia-gpu-push-images
     cluster: k8s-infra-prow-build-trusted
     annotations:
       testgrid-dashboards: sig-node-image-pushes, sig-k8s-infra-gcb
