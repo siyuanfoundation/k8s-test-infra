@@ -3997,54 +3997,55 @@ presubmits:
             cpu: "7"
             memory: 10Gi
       serviceAccountName: node-e2e-tests
-  - always_run: false
-    branches:
-    - release-1.36
-    cluster: k8s-infra-prow-build
-    context: pull-kubernetes-e2e-gce-cos-serial
-    decorate: true
-    decoration_config:
-      timeout: 11h20m0s
-    extra_refs:
-    - base_ref: master
-      org: kubernetes
-      path_alias: k8s.io/release
-      repo: release
-    labels:
-      preset-dind-enabled: "true"
-      preset-k8s-ssh: "true"
-      preset-pull-kubernetes-e2e: "true"
-      preset-pull-kubernetes-e2e-gce: "true"
-      preset-service-account: "true"
-    name: pull-kubernetes-e2e-gce-cos-serial
-    optional: true
-    path_alias: k8s.io/kubernetes
-    spec:
-      containers:
-      - args:
-        - --build=quick
-        - --check-leaked-resources
-        - --provider=gce
-        - --gcp-region=us-central1
-        - --gcp-node-image=gci
-        - --timeout=660m
-        - --ginkgo-parallel=1
-        - --test_args=--ginkgo.focus=\[Serial\]|\[Disruptive\] --ginkgo.skip=\[Driver:.gcepd\]|\[Flaky\]|\[Feature:.+\]|\[sig-cloud-provider-gcp\]
-          --minStartupPods=8
-        command:
-        - runner.sh
-        - /workspace/scenarios/kubernetes_e2e.py
-        image: gcr.io/k8s-staging-test-infra/kubekins-e2e:v20260316-e86cefa561-1.36
-        name: ""
-        resources:
-          limits:
-            cpu: "4"
-            memory: 14Gi
-          requests:
-            cpu: "4"
-            memory: 14Gi
-        securityContext:
-          privileged: true
+  # TODO Clean this up later
+  # - always_run: false
+  #   branches:
+  #   - release-1.36
+  #   cluster: k8s-infra-prow-build
+  #   context: pull-kubernetes-e2e-gce-cos-serial
+  #   decorate: true
+  #   decoration_config:
+  #     timeout: 11h20m0s
+  #   extra_refs:
+  #   - base_ref: master
+  #     org: kubernetes
+  #     path_alias: k8s.io/release
+  #     repo: release
+  #   labels:
+  #     preset-dind-enabled: "true"
+  #     preset-k8s-ssh: "true"
+  #     preset-pull-kubernetes-e2e: "true"
+  #     preset-pull-kubernetes-e2e-gce: "true"
+  #     preset-service-account: "true"
+  #   name: pull-kubernetes-e2e-gce-cos-serial
+  #   optional: true
+  #   path_alias: k8s.io/kubernetes
+  #   spec:
+  #     containers:
+  #     - args:
+  #       - --build=quick
+  #       - --check-leaked-resources
+  #       - --provider=gce
+  #       - --gcp-region=us-central1
+  #       - --gcp-node-image=gci
+  #       - --timeout=660m
+  #       - --ginkgo-parallel=1
+  #       - --test_args=--ginkgo.focus=\[Serial\]|\[Disruptive\] --ginkgo.skip=\[Driver:.gcepd\]|\[Flaky\]|\[Feature:.+\]|\[sig-cloud-provider-gcp\]
+  #         --minStartupPods=8
+  #       command:
+  #       - runner.sh
+  #       - /workspace/scenarios/kubernetes_e2e.py
+  #       image: gcr.io/k8s-staging-test-infra/kubekins-e2e:v20260316-e86cefa561-1.36
+  #       name: ""
+  #       resources:
+  #         limits:
+  #           cpu: "4"
+  #           memory: 14Gi
+  #         requests:
+  #           cpu: "4"
+  #           memory: 14Gi
+  #       securityContext:
+  #         privileged: true
   - always_run: false
     branches:
     - release-1.36
