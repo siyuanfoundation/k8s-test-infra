@@ -18,7 +18,7 @@ presubmits:
   - name: pull-dra-driver-nvidia-gpu-e2e-lambda-gpu
     cluster: k8s-infra-prow-build
     optional: true
-    always_run: false
+    always_run: true
     max_concurrency: 1
     skip_branches:
     - release-\d+\.\d+
