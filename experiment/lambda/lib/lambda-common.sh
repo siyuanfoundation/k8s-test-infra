@@ -61,6 +61,12 @@ lambda_launch() {
     --wait-ssh)
   LAMBDA_INSTANCE_IP=$(echo "${launch_output}" | jq -r '.ip')
   LAMBDA_INSTANCE_ID=$(echo "${launch_output}" | jq -r '.id')
+  # Update LAMBDA_GPU_TYPE from the actual provisioned instance type.
+  # When GPU_TYPE="" (accept any), the requested type is empty but the
+  # provisioned type is concrete (e.g., gpu_1x_a10, gpu_8x_v100_n).
+  # Callers use this to gate tests by GPU capability.
+  LAMBDA_GPU_TYPE=$(echo "${launch_output}" | jq -r '.instance_type.name')
+  echo "Launched ${LAMBDA_GPU_TYPE} instance ${LAMBDA_INSTANCE_ID} at ${LAMBDA_INSTANCE_IP}"
 }
 
 # Register cleanup trap (call after lambda_create_ssh_key)
