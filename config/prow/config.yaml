@@ -900,6 +900,7 @@ tide:
     kubernetes-sigs/minibroker: squash
     kubernetes-sigs/vsphere-csi-driver: squash
     kubernetes-sigs/cloud-provider-azure: squash
+    kubernetes/cloud-provider-gcp: squash
     kubernetes/cloud-provider-openstack: squash
     kubernetes/dashboard: squash
     kubernetes/ingress-nginx: squash
