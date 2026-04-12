@@ -18,9 +18,10 @@
 #
 # Base: system deps, CNI, containerd with NVIDIA runtime, kubeadm cluster.
 # Optional (controlled by env vars):
-#   ENABLE_CDI=true        -- enable CDI in containerd (required for DRA)
-#   ENABLE_DOCKER=true     -- install Docker (needed by harnesses that run in containers)
-#   NODE_LABELS="k=v,..."  -- additional node labels (e.g., nvidia.com/gpu.present=true)
+#   ENABLE_CDI=true               -- enable CDI in containerd (required for DRA)
+#   ENABLE_DOCKER=true            -- install Docker (needed by harnesses that run in containers)
+#   NODE_LABELS="k=v,..."         -- additional node labels (e.g., nvidia.com/gpu.present=true)
+#   KUBEADM_FEATURE_GATES="K=v"   -- feature gates for API server, scheduler, controller-manager, kubelet
 #
 # Does NOT install any GPU driver/plugin -- callers handle that.
 set -euxo pipefail
@@ -29,6 +30,7 @@ ENABLE_CDI="${ENABLE_CDI:-false}"
 ENABLE_DOCKER="${ENABLE_DOCKER:-false}"
 NODE_LABELS="${NODE_LABELS:-}"
 K8S_BINS_DIR="${K8S_BINS_DIR:-/tmp/k8s-bins}"
+KUBEADM_FEATURE_GATES="${KUBEADM_FEATURE_GATES:-}"
 
 # --- System dependencies ---
 sudo apt-get update -qq
@@ -125,10 +127,58 @@ sudo systemctl daemon-reload
 sudo systemctl enable kubelet
 
 # --- kubeadm init ---
-sudo kubeadm init \
-  --pod-network-cidr=10.88.0.0/16 \
-  --cri-socket=unix:///run/containerd/containerd.sock \
-  --ignore-preflight-errors=NumCPU,Mem,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification,KubeletVersion
+if [ -n "${KUBEADM_FEATURE_GATES}" ]; then
+  # Use a config file to pass feature gates to all control plane components.
+  # Config file is required because kubeadm CLI --feature-gates only controls
+  # kubeadm's own gates, not apiserver/scheduler/controller-manager/kubelet.
+  KUBEADM_CONFIG=/tmp/kubeadm-config.yaml
+  cat > "${KUBEADM_CONFIG}" <<KCEOF
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: unix:///run/containerd/containerd.sock
+  ignorePreflightErrors:
+    - NumCPU
+    - Mem
+    - FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+    - SystemVerification
+    - KubeletVersion
+---
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: ClusterConfiguration
+networking:
+  podSubnet: 10.88.0.0/16
+apiServer:
+  extraArgs:
+    - name: feature-gates
+      value: ${KUBEADM_FEATURE_GATES}
+scheduler:
+  extraArgs:
+    - name: feature-gates
+      value: ${KUBEADM_FEATURE_GATES}
+controllerManager:
+  extraArgs:
+    - name: feature-gates
+      value: ${KUBEADM_FEATURE_GATES}
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+featureGates:
+KCEOF
+  # Append each feature gate as a YAML key-value pair under featureGates.
+  IFS=',' read -ra FG_PAIRS <<< "${KUBEADM_FEATURE_GATES}"
+  for pair in "${FG_PAIRS[@]}"; do
+    echo "  ${pair%%=*}: ${pair#*=}" >> "${KUBEADM_CONFIG}"
+  done
+  echo "kubeadm config with feature gates:"
+  cat "${KUBEADM_CONFIG}"
+  sudo kubeadm init --config "${KUBEADM_CONFIG}"
+else
+  sudo kubeadm init \
+    --pod-network-cidr=10.88.0.0/16 \
+    --cri-socket=unix:///run/containerd/containerd.sock \
+    --ignore-preflight-errors=NumCPU,Mem,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,SystemVerification,KubeletVersion
+fi
 
 mkdir -p "$HOME/.kube"
 sudo cp /etc/kubernetes/admin.conf "$HOME/.kube/config"
