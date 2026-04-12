@@ -244,23 +244,7 @@ dashboards:
       test_group_name: s390x-conformance-v1.31
       description: Runs conformance tests by using kubetest2 against latest v1.31 branch HEAD of kubernetes on local s390x cluster
 
-# CEL Conformance Tests
-- name: google-cel
-  dashboard_tab:
-  - name: cel-go
-    test_group_name: cel-go-conformance-tests
-    file_bug_template: # The URL template to visit when filing a bug
-      url: https://github.com/google/cel-go/issues/new
-    results_text: # Text to show in the about menu as a link to another view of the results
-    code_search_path: github.com/google/cel-go/search # URL for regression search links.
-    code_search_url_template: # The URL template to visit when searching for changelists
-      url: https://github.com/google/cel-go/compare/<start-custom-0>...<end-custom-0>
-
 test_groups:
-
-# CEL Conformance Tests
-- name: cel-go-conformance-tests
-  gcs_prefix: cel-conformance/test-logs
 
 #IBM s390x test results
 - name: s390x-conformance-v1.33
@@ -269,16 +253,6 @@ test_groups:
   gcs_prefix: k8s-conform-s390x-k8s/logs/ci-k8s-conformance-s390x-v1.32
 - name: s390x-conformance-v1.31
   gcs_prefix: k8s-conform-s390x-k8s/logs/ci-k8s-conformance-s390x-v1.31
-
-# google-osconfig
-- name: osconfig-unstable
-  gcs_prefix: compute-image-tools-test/logs/osconfig-unstable
-- name: osconfig-staging
-  gcs_prefix: compute-image-tools-test/logs/osconfig-staging
-- name: osconfig-stable
-  gcs_prefix: compute-image-tools-test/logs/osconfig-stable
-- name: osconfig-head-images
-  gcs_prefix: compute-image-tools-test/logs/osconfig-head-images
 
 # Gardener Conformance Test Groups
 - name: ci-gardener-e2e-conformance-aws-v1.34
