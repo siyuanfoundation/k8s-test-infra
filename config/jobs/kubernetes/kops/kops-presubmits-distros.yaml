@@ -1619,7 +1619,7 @@ presubmits:
       testgrid-days-of-results: '90'
       testgrid-tab-name: pull-kops-aws-kindnet-rhel9
 
-  # {"cloud": "aws", "distro": "rhel10arm64", "extra_flags": "--zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
+  # {"cloud": "aws", "distro": "rhel10arm64", "extra_flags": "--zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
   - name: pull-kops-aws-distro-rhel10arm64
     cluster: k8s-infra-kops-prow-build
     branches:
@@ -1650,7 +1650,7 @@ presubmits:
             -v 2 \
             --up --build --down \
             --cloud-provider=aws \
-            --create-args="--image='309956199498/RHEL-10.1.0_HVM-20260217-arm64-0-Hourly2-GP3' --channel=alpha --networking=cilium --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large" \
+            --create-args="--image='309956199498/RHEL-10.1.0_HVM-20260217-arm64-0-Hourly2-GP3' --channel=alpha --networking=cilium --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true" \
             --kubernetes-version=https://dl.k8s.io/release/stable.txt \
             --kops-binary-path=/home/prow/go/src/k8s.io/kops/.build/dist/linux/amd64/kops \
             --test=kops \
@@ -1679,7 +1679,7 @@ presubmits:
     annotations:
       test.kops.k8s.io/cloud: aws
       test.kops.k8s.io/distro: rhel10arm64
-      test.kops.k8s.io/extra_flags: --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large
+      test.kops.k8s.io/extra_flags: --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true
       test.kops.k8s.io/k8s_version: stable
       test.kops.k8s.io/kops_channel: alpha
       test.kops.k8s.io/networking: cilium
@@ -1889,7 +1889,7 @@ presubmits:
       testgrid-days-of-results: '90'
       testgrid-tab-name: pull-kops-aws-kindnet-rocky9
 
-  # {"cloud": "aws", "distro": "rocky10arm64", "extra_flags": "--zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
+  # {"cloud": "aws", "distro": "rocky10arm64", "extra_flags": "--zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
   - name: pull-kops-aws-distro-rocky10arm64
     cluster: k8s-infra-kops-prow-build
     branches:
@@ -1920,7 +1920,7 @@ presubmits:
             -v 2 \
             --up --build --down \
             --cloud-provider=aws \
-            --create-args="--image='792107900819/Rocky-10-EC2-Base-10.1-20251116.0.aarch64' --channel=alpha --networking=cilium --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large" \
+            --create-args="--image='792107900819/Rocky-10-EC2-Base-10.1-20251116.0.aarch64' --channel=alpha --networking=cilium --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true" \
             --kubernetes-version=https://dl.k8s.io/release/stable.txt \
             --kops-binary-path=/home/prow/go/src/k8s.io/kops/.build/dist/linux/amd64/kops \
             --test=kops \
@@ -1949,7 +1949,7 @@ presubmits:
     annotations:
       test.kops.k8s.io/cloud: aws
       test.kops.k8s.io/distro: rocky10arm64
-      test.kops.k8s.io/extra_flags: --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large
+      test.kops.k8s.io/extra_flags: --zones=eu-west-1a --node-size=m6g.large --control-plane-size=m6g.large --set=cluster.spec.networking.cilium.enableBPFMasquerade=true
       test.kops.k8s.io/k8s_version: stable
       test.kops.k8s.io/kops_channel: alpha
       test.kops.k8s.io/networking: cilium
@@ -4199,7 +4199,7 @@ presubmits:
       testgrid-days-of-results: '90'
       testgrid-tab-name: pull-kops-gce-ipalias-ubuntuminimal2404arm64
 
-  # {"cloud": "gce", "distro": "rhel10", "extra_flags": "--gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
+  # {"cloud": "gce", "distro": "rhel10", "extra_flags": "--gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
   - name: pull-kops-gce-distro-rhel10
     cluster: k8s-infra-prow-build
     branches:
@@ -4230,7 +4230,7 @@ presubmits:
             --up --build --down \
             --cloud-provider=gce \
             --admin-access=0.0.0.0/0 \
-            --create-args="--image='rhel-cloud/rhel-10-v20260310' --channel=alpha --networking=cilium --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true" \
+            --create-args="--image='rhel-cloud/rhel-10-v20260310' --channel=alpha --networking=cilium --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true" \
             --kubernetes-version=https://dl.k8s.io/release/stable.txt \
             --kops-binary-path=/home/prow/go/src/k8s.io/kops/.build/dist/linux/amd64/kops \
             --test=kops \
@@ -4259,7 +4259,7 @@ presubmits:
     annotations:
       test.kops.k8s.io/cloud: gce
       test.kops.k8s.io/distro: rhel10
-      test.kops.k8s.io/extra_flags: --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true
+      test.kops.k8s.io/extra_flags: --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true
       test.kops.k8s.io/k8s_version: stable
       test.kops.k8s.io/kops_channel: alpha
       test.kops.k8s.io/networking: cilium
@@ -4335,7 +4335,7 @@ presubmits:
       testgrid-days-of-results: '90'
       testgrid-tab-name: pull-kops-gce-ipalias-rhel10
 
-  # {"cloud": "gce", "distro": "rocky10arm64", "extra_flags": "--gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
+  # {"cloud": "gce", "distro": "rocky10arm64", "extra_flags": "--gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
   - name: pull-kops-gce-distro-rocky10arm64
     cluster: k8s-infra-prow-build
     branches:
@@ -4366,7 +4366,7 @@ presubmits:
             --up --build --down \
             --cloud-provider=gce \
             --admin-access=0.0.0.0/0 \
-            --create-args="--image='rocky-linux-cloud/rocky-linux-10-optimized-gcp-arm64-v20260313' --channel=alpha --networking=cilium --gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true" \
+            --create-args="--image='rocky-linux-cloud/rocky-linux-10-optimized-gcp-arm64-v20260313' --channel=alpha --networking=cilium --gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true" \
             --kubernetes-version=https://dl.k8s.io/release/stable.txt \
             --kops-binary-path=/home/prow/go/src/k8s.io/kops/.build/dist/linux/amd64/kops \
             --test=kops \
@@ -4395,7 +4395,7 @@ presubmits:
     annotations:
       test.kops.k8s.io/cloud: gce
       test.kops.k8s.io/distro: rocky10arm64
-      test.kops.k8s.io/extra_flags: --gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true
+      test.kops.k8s.io/extra_flags: --gce-service-account=default --node-size=t2a-standard-2 --control-plane-size=t2a-standard-2 --zones=us-central1-a --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true
       test.kops.k8s.io/k8s_version: stable
       test.kops.k8s.io/kops_channel: alpha
       test.kops.k8s.io/networking: cilium
@@ -4471,7 +4471,7 @@ presubmits:
       testgrid-days-of-results: '90'
       testgrid-tab-name: pull-kops-gce-ipalias-rocky10arm64
 
-  # {"cloud": "gce", "distro": "rocky10", "extra_flags": "--gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
+  # {"cloud": "gce", "distro": "rocky10", "extra_flags": "--gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true", "k8s_version": "stable", "kops_channel": "alpha", "networking": "cilium"}
   - name: pull-kops-gce-distro-rocky10
     cluster: k8s-infra-prow-build
     branches:
@@ -4502,7 +4502,7 @@ presubmits:
             --up --build --down \
             --cloud-provider=gce \
             --admin-access=0.0.0.0/0 \
-            --create-args="--image='rocky-linux-cloud/rocky-linux-10-optimized-gcp-v20260313' --channel=alpha --networking=cilium --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true" \
+            --create-args="--image='rocky-linux-cloud/rocky-linux-10-optimized-gcp-v20260313' --channel=alpha --networking=cilium --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true" \
             --kubernetes-version=https://dl.k8s.io/release/stable.txt \
             --kops-binary-path=/home/prow/go/src/k8s.io/kops/.build/dist/linux/amd64/kops \
             --test=kops \
@@ -4531,7 +4531,7 @@ presubmits:
     annotations:
       test.kops.k8s.io/cloud: gce
       test.kops.k8s.io/distro: rocky10
-      test.kops.k8s.io/extra_flags: --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true
+      test.kops.k8s.io/extra_flags: --gce-service-account=default --set=cluster.spec.cloudProvider.gce.useStartupScript=true --set=cluster.spec.networking.cilium.enableBPFMasquerade=true
       test.kops.k8s.io/k8s_version: stable
       test.kops.k8s.io/kops_channel: alpha
       test.kops.k8s.io/networking: cilium

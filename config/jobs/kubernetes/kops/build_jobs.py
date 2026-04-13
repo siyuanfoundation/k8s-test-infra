@@ -517,7 +517,7 @@ def generate_grid():
                         extra_flags.extend([
                             "--topology=public",
                         ])
-                    if 'rhel10' in distro:
+                    if 'rhel10' in distro or 'rocky10' in distro:
                         # https://github.com/kubernetes/kops/issues/17915
                         extra_flags.extend([
                             "--set=cluster.spec.kubeProxy.proxyMode=nftables",
@@ -525,6 +525,14 @@ def generate_grid():
                         if networking == 'amazon-vpc':
                             extra_flags.extend([
                                 "--set=cluster.spec.networking.amazonVPC.env=ENABLE_NFTABLES=true",
+                            ])
+                        if 'cilium' in networking:
+                            extra_flags.extend([
+                                "--set=cluster.spec.networking.cilium.enableBPFMasquerade=true",
+                            ])
+                        if networking == 'calico':
+                            extra_flags.extend([
+                                "--set=cluster.spec.networking.calico.bpfEnabled=true",
                             ])
                     results.append(
                         build_test(cloud="aws",
@@ -558,6 +566,19 @@ def generate_grid():
                         extra_flags.extend([
                             "--set=cluster.spec.cloudProvider.gce.useStartupScript=true"
                         ])
+                    if 'rhel10' in distro or 'rocky10' in distro:
+                        # https://github.com/kubernetes/kops/issues/17915
+                        extra_flags.extend([
+                            "--set=cluster.spec.kubeProxy.proxyMode=nftables",
+                        ])
+                        if 'cilium' in networking:
+                            extra_flags.extend([
+                                "--set=cluster.spec.networking.cilium.enableBPFMasquerade=true",
+                            ])
+                        if networking == 'calico':
+                            extra_flags.extend([
+                                "--set=cluster.spec.networking.calico.bpfEnabled=true",
+                            ])
                     results.append(
                         build_test(cloud="gce",
                                    runs_per_day=2,
@@ -1406,6 +1427,10 @@ def generate_distros():
                 "--node-size=m6g.large",
                 "--control-plane-size=m6g.large"
             ])
+        if 'rhel10' in distro or 'rocky10' in distro:
+            extra_flags.extend([
+                "--set=cluster.spec.networking.cilium.enableBPFMasquerade=true",
+            ])
         results.append(
             build_test(distro=distro_short,
                        networking='cilium',
@@ -1433,6 +1458,11 @@ def generate_presubmits_distros():
                 "--node-size=m6g.large",
                 "--control-plane-size=m6g.large"
             ])
+        cilium_extra_flags = list(extra_flags)
+        if 'rhel10' in distro or 'rocky10' in distro:
+            cilium_extra_flags.extend([
+                "--set=cluster.spec.networking.cilium.enableBPFMasquerade=true",
+            ])
         results.append(
             presubmit_test(
                 distro=distro_short,
@@ -1441,7 +1471,7 @@ def generate_presubmits_distros():
                 kops_channel='alpha',
                 name=f"pull-kops-aws-distro-{distro}",
                 tab_name=f"e2e-aws-{distro}",
-                extra_flags=extra_flags,
+                extra_flags=cilium_extra_flags,
                 always_run=False,
             )
         )
@@ -1472,6 +1502,11 @@ def generate_presubmits_distros():
             extra_flags.extend([
                 "--set=cluster.spec.cloudProvider.gce.useStartupScript=true"
             ])
+        cilium_extra_flags = list(extra_flags)
+        if 'rhel10' in distro or 'rocky10' in distro:
+            cilium_extra_flags.extend([
+                "--set=cluster.spec.networking.cilium.enableBPFMasquerade=true",
+            ])
         results.append(
             presubmit_test(
                 cloud="gce",
@@ -1481,7 +1516,7 @@ def generate_presubmits_distros():
                 kops_channel='alpha',
                 name=f"pull-kops-gce-distro-{distro}",
                 tab_name=f"e2e-gce-{distro}",
-                extra_flags=extra_flags,
+                extra_flags=cilium_extra_flags,
                 always_run=False,
             )
         )
