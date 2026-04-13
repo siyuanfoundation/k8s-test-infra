@@ -842,14 +842,14 @@ periodics:
       securityContext:
         privileged: true
 - annotations:
-    fork-per-release-cron: 50 2-23/4 * * *
+    fork-per-release-cron: 0 17 * * *
     testgrid-alert-email: sig-cloud-provider-ibm-ppc64le-alerts@kubernetes.io
     testgrid-dashboards: ibm-ppc64le-e2e, ibm-ppc64le-k8s, conformance-ppc64le, ibm-k8s-e2e,
       sig-release-job-config-errors
     testgrid-num-failures-to-alert: "2"
     testgrid-tab-name: ci-kubernetes-ppc64le-conformance-latest-1.33
   cluster: k8s-infra-ppc64le-prow-build
-  cron: 40 4-23/4 * * *
+  cron: 0 13 * * *
   decorate: true
   decoration_config:
     timeout: 5h0m0s
