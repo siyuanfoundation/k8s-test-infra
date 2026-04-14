@@ -1244,7 +1244,7 @@ periodics:
     testgrid-days-of-results: '35'
     testgrid-tab-name: kops-gce-cni-kubenet
 
-# {"cloud": "aws", "distro": "u2404", "extra_flags": "--node-size=t3.large", "k8s_version": "ci", "kops_channel": "alpha", "kops_version": "latest", "networking": "kube-router"}
+# {"cloud": "aws", "distro": "u2404", "extra_flags": "--node-size=t3.large", "k8s_version": "stable", "kops_channel": "alpha", "kops_version": "latest", "networking": "kube-router"}
 - name: e2e-kops-aws-cni-kuberouter
   cron: '31 7-23/8 * * *'
   labels:
@@ -1276,13 +1276,11 @@ periodics:
           --cloud-provider=aws \
           --create-args="--image='099720109477/ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260313' --channel=alpha --networking=kube-router --node-size=t3.large" \
           --kops-version-marker=https://storage.googleapis.com/k8s-staging-kops/kops/releases/markers/master/latest-ci-updown-green.txt \
-          --kubernetes-version=https://dl.k8s.io/ci/latest.txt \
+          --kubernetes-version=https://dl.k8s.io/release/stable.txt \
           --test=kops \
           -- \
           --test-args="-test.timeout=60m" \
-          --test-package-url=https://dl.k8s.io \
-          --test-package-dir=ci \
-          --test-package-marker=latest.txt \
+          --test-package-marker=stable.txt \
           --parallel=25
       env:
       - name: KUBE_SSH_KEY_PATH
@@ -1304,10 +1302,10 @@ periodics:
     test.kops.k8s.io/cloud: aws
     test.kops.k8s.io/distro: u2404
     test.kops.k8s.io/extra_flags: --node-size=t3.large
-    test.kops.k8s.io/k8s_version: ci
+    test.kops.k8s.io/k8s_version: stable
     test.kops.k8s.io/kops_channel: alpha
     test.kops.k8s.io/kops_version: latest
     test.kops.k8s.io/networking: kube-router
-    testgrid-dashboards: kops-distro-u2404, kops-k8s-ci, kops-latest, kops-network-plugins, sig-cluster-lifecycle-kops
+    testgrid-dashboards: kops-distro-u2404, kops-k8s-stable, kops-latest, kops-network-plugins, sig-cluster-lifecycle-kops
     testgrid-days-of-results: '90'
     testgrid-tab-name: kops-aws-cni-kuberouter
