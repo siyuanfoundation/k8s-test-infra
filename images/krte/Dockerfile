@@ -21,8 +21,9 @@ FROM debian:bookworm
 # arg that specifies the image name (for debugging)
 ARG IMAGE_ARG
 
-# arg that specifies the go version to install.
-# empty value specifies the latest version.
+# Overrides the Go version to install.
+# Unset GO_VERSION means we will respect .go-version in the kubernetes repo
+# based on K8S_BRANCH.
 ARG GO_VERSION
 # which Kubernetes branch we're building for
 ARG K8S_BRANCH=master

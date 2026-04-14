@@ -148,7 +148,10 @@ RUN rm -f $(which kubectl) && \
     export KUBECTL_VERSION=$(curl --retry 6 --retry-connrefused -fsSL https://dl.k8s.io/release/${K8S_RELEASE}.txt) && \
     wget -q https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl -O /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
-# install go
+# Install go
+# Overrides the Go version to install.
+# Unset GO_VERSION means we will respect .go-version in the kubernetes repo
+# based on K8S_BRANCH.
 ARG GO_VERSION
 ARG K8S_BRANCH
 RUN if [ -z "${GO_VERSION}" ]; then \
