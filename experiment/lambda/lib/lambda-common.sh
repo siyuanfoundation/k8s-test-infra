@@ -86,9 +86,18 @@ lambda_remote() {
   ssh "${LAMBDA_SSH_OPTS[@]}" -i "${LAMBDA_SSH_KEY}" "ubuntu@${LAMBDA_INSTANCE_IP}" "$@"
 }
 
-# Rsync files to the Lambda instance
+# Rsync files to the Lambda instance (with retry for transient SSH failures)
 lambda_rsync_to() {
-  rsync -a -e "ssh ${LAMBDA_SSH_OPTS[*]} -i ${LAMBDA_SSH_KEY}" "$@"
+  local attempt
+  for attempt in 1 2 3; do
+    if rsync -a -e "ssh ${LAMBDA_SSH_OPTS[*]} -i ${LAMBDA_SSH_KEY}" "$@"; then
+      return 0
+    fi
+    echo "rsync attempt ${attempt} failed, retrying in 5s..." >&2
+    sleep 5
+  done
+  echo "rsync failed after 3 attempts" >&2
+  return 1
 }
 
 # Detect the Lambda instance's CPU architecture (call after lambda_launch).

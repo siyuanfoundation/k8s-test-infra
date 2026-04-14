@@ -44,10 +44,17 @@ lambda_rsync_to _output/local/bin/linux/${LAMBDA_ARCH}/{e2e.test,ginkgo} "ubuntu
 lambda_remote bash -s < "${SCRIPT_DIR}/lib/setup-k8s-node.sh"
 
 # --- Deploy NVIDIA device plugin and wait for GPU capacity ---
+# Download manifest on Prow side (reliable network) and transfer to Lambda instance.
+# This avoids TLS issues on some Lambda instances when fetching from raw.githubusercontent.com.
+DEVICE_PLUGIN_MANIFEST="/tmp/nvidia-device-plugin.yml"
+curl -sSfL -o "${DEVICE_PLUGIN_MANIFEST}" \
+  https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.1/deployments/static/nvidia-device-plugin.yml
+lambda_rsync_to "${DEVICE_PLUGIN_MANIFEST}" "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/"
+
 lambda_remote bash -s <<'EOF'
 set -eux
 export KUBECONFIG=$HOME/.kube/config
-kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.1/deployments/static/nvidia-device-plugin.yml
+kubectl apply -f /tmp/nvidia-device-plugin.yml
 kubectl -n kube-system rollout status daemonset/nvidia-device-plugin-daemonset --timeout=120s
 
 # Wait for GPU capacity to appear on the node
