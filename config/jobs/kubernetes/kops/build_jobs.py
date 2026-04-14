@@ -1550,8 +1550,6 @@ def generate_network_plugins():
             k8s_version = 'stable'
             distro = 'u2404'
             extra_flags = ['--node-size=t3.large']
-            if plugin in ['kuberouter']:
-                k8s_version = 'ci'
             if plugin in ['amazon-vpc']:
                 extra_flags += [
                     "--set=cluster.spec.networking.amazonVPC.env=ENABLE_PREFIX_DELEGATION=true",
@@ -2011,7 +2009,6 @@ def generate_presubmits_network_plugins():
                 optional = True
             if plugin == 'kuberouter':
                 networking_arg = 'kube-router'
-                k8s_version = 'ci'
                 optional = True
             aws_extra_flags = [
                 "--control-plane-size=c6g.large",
