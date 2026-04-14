@@ -31,12 +31,13 @@ lambda_init_and_launch
 # --- Build k8s binaries ---
 git fetch --tags --depth 100 origin 2>/dev/null || true
 make \
-  WHAT="cmd/kubeadm cmd/kubelet cmd/kubectl test/e2e/e2e.test vendor/github.com/onsi/ginkgo/v2/ginkgo"
+  WHAT="cmd/kubeadm cmd/kubelet cmd/kubectl test/e2e/e2e.test vendor/github.com/onsi/ginkgo/v2/ginkgo" \
+  KUBE_BUILD_PLATFORMS="linux/${LAMBDA_ARCH}"
 
 # --- Transfer binaries to Lambda instance ---
 lambda_remote mkdir -p /tmp/k8s-bins
-lambda_rsync_to _output/local/go/bin/{kubeadm,kubelet,kubectl} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/k8s-bins/"
-lambda_rsync_to _output/local/go/bin/{e2e.test,ginkgo} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/"
+lambda_rsync_to _output/local/bin/linux/${LAMBDA_ARCH}/{kubeadm,kubelet,kubectl} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/k8s-bins/"
+lambda_rsync_to _output/local/bin/linux/${LAMBDA_ARCH}/{e2e.test,ginkgo} "ubuntu@${LAMBDA_INSTANCE_IP}:/tmp/"
 
 # --- Set up single-node k8s cluster with GPU support ---
 # No CDI, no Docker, no extra labels needed for device-plugin.
