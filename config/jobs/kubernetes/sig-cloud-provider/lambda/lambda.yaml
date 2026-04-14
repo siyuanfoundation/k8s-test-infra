@@ -25,7 +25,7 @@ presubmits:
     labels:
       preset-lambda-credential: "true"
     annotations:
-      testgrid-dashboards: sig-node-gpu
+      testgrid-dashboards: sig-node-gpu, lambda-gpu-presubmits
       testgrid-tab-name: pull-lambda-device-plugin-gpu
       description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud GPU instance"
     decorate: true
@@ -65,7 +65,7 @@ periodics:
   labels:
     preset-lambda-credential: "true"
   annotations:
-    testgrid-dashboards: sig-node-gpu
+    testgrid-dashboards: sig-node-gpu, lambda-gpu-periodics
     testgrid-tab-name: ci-lambda-device-plugin-gpu
     description: "Runs [Feature:GPUDevicePlugin] e2e tests on a Lambda Cloud GPU instance"
   decorate: true
