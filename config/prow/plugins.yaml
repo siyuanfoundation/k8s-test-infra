@@ -288,6 +288,7 @@ lgtm:
   - kubernetes-sigs/cluster-api-provider-azure
   - kubernetes-sigs/cluster-api-provider-vsphere
   - kubernetes-sigs/cluster-api-provider-aws
+  - kubernetes-sigs/dra-driver-nvidia-gpu
   - kubernetes-sigs/dra-example-driver
   - kubernetes-sigs/kjob
   - kubernetes-sigs/kueue
@@ -687,6 +688,9 @@ repo_milestone:
   kubernetes-sigs/kueue:
     maintainers_team: kueue-maintainers
     maintainers_friendly_name: Kueue Maintainers
+  kubernetes-sigs/dra-driver-nvidia-gpu:
+    maintainers_team: dra-driver-nvidia-gpu-maintainers
+    maintainers_friendly_name: DRA Driver NVIDIA GPU Maintainers
   kubernetes-sigs/gateway-api-inference-extension:
     maintainers_team: gateway-api-inference-extension-milestone-maintainers
     maintainers_friendly_name: Inference Gateway Milestone Maintainers
@@ -949,6 +953,11 @@ require_matching_label:
   issues: true
   prs: true
   regexp: ^priority/
+- missing_label: needs-kind
+  org: kubernetes-sigs
+  repo: dra-driver-nvidia-gpu
+  prs: true
+  regexp: ^kind/
 - missing_label: needs-kind
   org: kubernetes-sigs
   repo: kustomize
@@ -1574,6 +1583,14 @@ plugins:
     - mergecommitblocker
     - override
     - branchcleaner
+
+  kubernetes-sigs/dra-driver-nvidia-gpu:
+    plugins:
+    - mergecommitblocker
+    - milestone
+    - override
+    - release-note
+    - require-matching-label
 
   kubernetes-sigs/etcd-manager:
     plugins:
