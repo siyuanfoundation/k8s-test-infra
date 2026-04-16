@@ -893,6 +893,7 @@ tide:
     kubernetes-sigs/lws: squash
     kubernetes-sigs/mcp-lifecycle-operator: squash
     kubernetes-sigs/gateway-api-inference-extension: squash
+    kubernetes-sigs/resource-state-metrics: rebase
     kubernetes-sigs/security-profiles-operator: rebase
     kubernetes-sigs/service-catalog: squash
     kubernetes-sigs/gateway-api: squash
