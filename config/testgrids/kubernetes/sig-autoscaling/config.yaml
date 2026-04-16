@@ -2,7 +2,8 @@ dashboard_groups:
   - name: sig-autoscaling
     dashboard_names:
       - sig-autoscaling-cluster-autoscaler
-      - sig-autoscaling-hpa
+      - sig-autoscaling-hpa-periodics
+      - sig-autoscaling-hpa-presubmits
       - sig-autoscaling-vpa-periodics
       - sig-autoscaling-vpa-presubmits
       - sig-autoscaling-karpenter
@@ -12,7 +13,8 @@ dashboard_groups:
 
 dashboards:
   - name: sig-autoscaling-cluster-autoscaler
-  - name: sig-autoscaling-hpa
+  - name: sig-autoscaling-hpa-periodics
+  - name: sig-autoscaling-hpa-presubmits
   - name: sig-autoscaling-vpa-periodics
   - name: sig-autoscaling-vpa-presubmits
   - name: sig-autoscaling-karpenter

@@ -59,7 +59,7 @@ presubmits:
   - name: pull-kubernetes-e2e-autoscaling-hpa-cpu
     cluster: k8s-infra-prow-build
     annotations:
-      testgrid-dashboards: sig-autoscaling-hpa
+      testgrid-dashboards: sig-autoscaling-hpa-presubmits
       testgrid-tab-name: gci-gce-autoscaling-hpa-cpu-pull
     # TODO: set `optional: false` once tests not flaky
     optional: true
@@ -107,7 +107,7 @@ presubmits:
   - name: pull-kubernetes-e2e-autoscaling-hpa-cpu-alpha-beta
     cluster: k8s-infra-prow-build
     annotations:
-      testgrid-dashboards: sig-autoscaling-hpa
+      testgrid-dashboards: sig-autoscaling-hpa-presubmits
       testgrid-tab-name: gci-gce-autoscaling-hpa-cpu-alpha-beta-pull
     # TODO: set `optional: false` once tests not flaky
     optional: true
