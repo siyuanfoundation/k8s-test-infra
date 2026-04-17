@@ -16,7 +16,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra
       description: Runs E2E tests for Dynamic Resource Allocation beta features against a Kubernetes master cluster created with sigs.k8s.io/kind
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -106,7 +105,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra-all
       description: Runs E2E tests for Dynamic Resource Allocation alpha and beta features against a Kubernetes master cluster created with sigs.k8s.io/kind
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -212,7 +210,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra-all-slow
       description: Runs E2E tests for Dynamic Resource Allocation alpha and beta features against a Kubernetes master cluster created with sigs.k8s.io/kind, including slow tests
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -319,7 +316,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra-n-1
       description: Runs E2E tests for Dynamic Resource Allocation beta features against a Kubernetes master cluster created with sigs.k8s.io/kind with kubelet from the "current - 1" release.
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -459,7 +455,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra-n-2
       description: Runs E2E tests for Dynamic Resource Allocation beta features against a Kubernetes master cluster created with sigs.k8s.io/kind with kubelet from the "current - 2" release.
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -599,7 +594,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-kind-dra-n-3
       description: Runs E2E tests for Dynamic Resource Allocation beta features against a Kubernetes master cluster created with sigs.k8s.io/kind with kubelet from the "current - 3" release.
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -739,7 +733,6 @@ presubmits:
       preset-kind-volume-mounts: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits
-      testgrid-tab-name: pull-kubernetes-dra-integration
       description: Runs integration tests for DRA which need some additional setup in the job.
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -785,7 +778,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-cri-o
-      testgrid-tab-name: pull-kubernetes-node-crio-dra
       description: Runs E2E node tests for Dynamic Resource Allocation on-by-default features with CRI-O
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -843,7 +835,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-cri-o
-      testgrid-tab-name: pull-kubernetes-node-crio-dra-alpha-beta-features
       description: Runs all E2E node tests for Dynamic Resource Allocation features with CRI-O and with all feature gates enabled (including non-DRA feature gates)
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -902,7 +893,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-containerd
-      testgrid-tab-name: pull-kubernetes-node-e2e-containerd-1-7-dra
       description: Runs E2E node tests for Dynamic Resource Allocation on-by-default features with containerd 1.7
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -954,7 +944,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-containerd
-      testgrid-tab-name: pull-kubernetes-node-e2e-containerd-2-0-dra
       description: Runs E2E node tests for Dynamic Resource Allocation on-by-default features with containerd 2.1
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -1008,7 +997,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-containerd
-      testgrid-tab-name: pull-kubernetes-node-e2e-containerd-1-7-dra-alpha-beta-features
       description: Runs all E2E node tests for Dynamic Resource Allocation features with containerd 1.7 and with all feature gates enabled (including non-DRA feature gates)
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
@@ -1060,7 +1048,6 @@ presubmits:
       preset-k8s-ssh: "true"
     annotations:
       testgrid-dashboards: sig-node-dynamic-resource-allocation, sig-node-presubmits, sig-node-containerd
-      testgrid-tab-name: pull-kubernetes-node-e2e-containerd-2-0-dra-alpha-beta-features
       description: Runs all E2E node tests for Dynamic Resource Allocation features with containerd 2.1 and with all feature gates enabled (including non-DRA feature gates)
       testgrid-alert-email: eduard.bartosh@intel.com, patrick.ohly@intel.com
       fork-per-release: "true"
